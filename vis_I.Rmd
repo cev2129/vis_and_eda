@@ -31,4 +31,52 @@ ggp_weather =
   weather_df |>
   ggplot(aes(x = tmin, y = tmax)) + 
   geom_point()
+``` 
+
+#Advanced Scatterplot 
+```{r}
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3, size = 0.8) + 
+  geom_smooth(se = FALSE)
+```
+geom_smooth gives you a smooth curve
+
+Where you define aes matters
+```{r}
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) +
+  geom_smooth(se = FALSE)
+```
+
+use faceting real quick 
+```{r}
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3, size = 0.8) + 
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+. means everything, then ~ siginifies columns. So basically we are separating panels for each park name 
+
+Lets make a more interesting scatterplot 
+```{r}
+weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name, size = prcp)) + 
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+
+#Learning Assesment: Data processing and making a plot\
+```{r}
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) |> 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
 ```

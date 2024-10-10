@@ -12,23 +12,8 @@ remotes::install_github("ropensci/rnoaa", force = TRUE)
 
     ## Downloading GitHub repo ropensci/rnoaa@HEAD
 
-    ## data.table (1.16.0 -> 1.16.2) [CRAN]
-
-    ## Installing 1 packages: data.table
-
-    ## 
-    ## The downloaded binary packages are in
-    ##  /var/folders/22/szn61jc14t71kxhr57h0tn840000gn/T//RtmpK8jhuV/downloaded_packages
-    ## ── R CMD build ─────────────────────────────────────────────────────────────────
-    ##      checking for file ‘/private/var/folders/22/szn61jc14t71kxhr57h0tn840000gn/T/RtmpK8jhuV/remotesfe9040e3d950/ropensci-rnoaa-95868c9/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/22/szn61jc14t71kxhr57h0tn840000gn/T/RtmpK8jhuV/remotesfe9040e3d950/ropensci-rnoaa-95868c9/DESCRIPTION’
-    ##   ─  preparing ‘rnoaa’:
-    ##    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-    ##   ─  checking for LF line-endings in source and make files and shell scripts
-    ##   ─  checking for empty or unneeded directories
-    ##    Removed empty directory ‘rnoaa/vignettes’
-    ## ─  building ‘rnoaa_1.4.0.tar.gz’
-    ##      
-    ## 
+    ## Error in utils::download.file(url, path, method = method, quiet = quiet,  : 
+    ##   download from 'https://api.github.com/repos/ropensci/rnoaa/tarball/HEAD' failed
 
 ``` r
 weather_df = read_csv(file = "weather_df.csv")
@@ -69,3 +54,123 @@ ggp_weather =
   ggplot(aes(x = tmin, y = tmax)) + 
   geom_point()
 ```
+
+\#Advanced Scatterplot
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3, size = 0.8) + 
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> geom_smooth
+gives you a smooth curve
+
+Where you define aes matters
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) +
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+use faceting real quick
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3, size = 0.8) + 
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> . means
+everything, then ~ siginifies columns. So basically we are separating
+panels for each park name
+
+Lets make a more interesting scatterplot
+
+``` r
+weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name, size = prcp)) + 
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: The following aesthetics were dropped during statistical transformation: size.
+    ## ℹ This can happen when ggplot fails to infer the correct grouping structure in
+    ##   the data.
+    ## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+    ##   variable into a factor?
+    ## The following aesthetics were dropped during statistical transformation: size.
+    ## ℹ This can happen when ggplot fails to infer the correct grouping structure in
+    ##   the data.
+    ## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+    ##   variable into a factor?
+    ## The following aesthetics were dropped during statistical transformation: size.
+    ## ℹ This can happen when ggplot fails to infer the correct grouping structure in
+    ##   the data.
+    ## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
+    ##   variable into a factor?
+
+    ## Warning: Removed 19 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+\#Learning Assesment: Data processing and making a plot  
+
+``` r
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) |> 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](vis_I_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
