@@ -13,7 +13,7 @@ remotes::install_github("ropensci/rnoaa", force = TRUE)
     ## Downloading GitHub repo ropensci/rnoaa@HEAD
 
     ## Error in utils::download.file(url, path, method = method, quiet = quiet,  : 
-    ##   download from 'https://api.github.com/repos/ropensci/rnoaa/tarball/HEAD' failed
+    ##   cannot open URL 'https://api.github.com/repos/ropensci/rnoaa/tarball/HEAD'
 
 ``` r
 weather_df = read_csv(file = "weather_df.csv")
@@ -174,3 +174,129 @@ weather_df |>
     ## `geom_smooth()` using formula = 'y ~ x'
 
 ![](vis_I_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+# Small Things
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3, size = 0.8) + 
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_smooth()`).
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+# Small Things
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, )) + 
+  geom_hex()
+```
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_binhex()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax, )) + 
+  geom_point(color = "blue")
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+If you set aes mapping to the color blue, it will actually come out red
+because blue is not a vairble in the dataset, so gg plot is creating a
+new variable for blue.
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, y = tmax,color = "blue" )) + 
+  geom_point()
+```
+
+    ## Warning: Removed 17 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+# Univariate plots
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin)) + 
+  geom_histogram()
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, color = name)) + 
+  geom_histogram(position = "dodge")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+weather_df |>
+  ggplot(aes(x = tmin, color = name)) + 
+  geom_histogram() + 
+  facet_grid(. ~ name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_bin()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-15-1.png)<!-- --> Box plot
+
+``` r
+weather_df |>
+ggplot(aes(x = name, y = tmax)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_boxplot()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+Ridge Plots
+
+``` r
+weather_df |>
+ggplot(aes(x = tmax, y = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+    ## Picking joint bandwidth of 1.54
+
+    ## Warning: Removed 17 rows containing non-finite outside the scale range
+    ## (`stat_density_ridges()`).
+
+![](vis_I_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
